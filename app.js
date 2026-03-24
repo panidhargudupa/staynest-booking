@@ -1,3 +1,4 @@
+// IMPORTS REQUIRED MODULES
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -7,9 +8,16 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressErr");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const localStrategy = require("passport-local");
+const User = require("./models/user.js");
+const passportLocalMongoose = require("passport-local-mongoose");
 
+
+// ROUTES
 const listingRoutes = require("./routes/listing");
 const reviewRoutes = require("./routes/review");
+const userRoutes = require("./routes/user.js");
 
 
 // DB
@@ -41,12 +49,30 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash()); // Flash messages
 
+// Passport Configuration
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser()); // serializeUser and deserializeUser are methods provided by passport-local-mongoose to handle user serialization and deserialization for session management.
+
 // Flash Middleware
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     next();
 });
+
+// Middleware to make currentUser available in all templates
+// app.get("/demouser", async(req, res) => {
+//     let fakeUser = new User({ 
+//         username: "demouser", 
+//         email: "student@gmail.com" 
+//     });
+//     let registeredUser = await User.register(fakeUser, "demopassword")
+//         res.send(registeredUser);
+//     });
 
 // HOME
 app.get("/",(req,res)=>{
@@ -56,6 +82,7 @@ app.get("/",(req,res)=>{
 // ROUTERS
 app.use("/listings", listingRoutes);
 app.use("/listings/:id/reviews", reviewRoutes);
+app.use("/", userRoutes);
 
 // 404
 app.use((req,res,next)=>{
