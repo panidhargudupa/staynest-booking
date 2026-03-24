@@ -5,6 +5,8 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressErr");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 const listingRoutes = require("./routes/listing");
 const reviewRoutes = require("./routes/review");
@@ -25,17 +27,35 @@ app.use(express.urlencoded({extended:true}));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname,"public")));
 
+//SESSION OPTIONS
+const sessionOptions = {
+    secret: "thisshouldbeabettersecret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        httpOnly: true
+    },
+};
+app.use(session(sessionOptions));
+app.use(flash()); // Flash messages
 
-// ROUTERS
-app.use("/listings", listingRoutes);
-app.use("/listings/:id/reviews", reviewRoutes);
-
+// Flash Middleware
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+});
 
 // HOME
 app.get("/",(req,res)=>{
     res.send("Working");
 });
 
+// ROUTERS
+app.use("/listings", listingRoutes);
+app.use("/listings/:id/reviews", reviewRoutes);
 
 // 404
 app.use((req,res,next)=>{

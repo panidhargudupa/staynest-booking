@@ -7,6 +7,7 @@ const wrapAsync = require("../utils/WrapAsync");
 const { validateReview } = require("../middleware");
 
 
+
 // CREATE REVIEW
 router.post("/", validateReview, wrapAsync(async (req, res) => {
 
@@ -19,6 +20,7 @@ router.post("/", validateReview, wrapAsync(async (req, res) => {
     await newReview.save();
     await listing.save();
 
+    req.flash("success", "new review successfully!");
     res.redirect(`/listings/${listing._id}`);
 }));
 
@@ -34,6 +36,7 @@ router.delete("/:reviewId", wrapAsync(async (req, res) => {
 
     await Review.findByIdAndDelete(reviewId);
 
+     req.flash("success", "deleted review successfully!");
     res.redirect(`/listings/${id}`);
 }));
 

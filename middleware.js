@@ -1,5 +1,4 @@
-const listingSchema = require("./schema");
-const reviewSchema = require("./schema");
+const { listingSchema, reviewSchema } = require("./schema");
 const ExpressError = require("./utils/ExpressErr");
 
 module.exports.validateListing = (req,res,next)=>{
