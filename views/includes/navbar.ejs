@@ -1,22 +1,34 @@
 <nav class="navbar navbar-expand-lg bg-body-light border-bottom sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="/"><i class="fa-regular fa-compass"></i></a>
+    <!-- The button that appears on smaller screens to toggle the navigation menu -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
+   
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
+     <!--Show the Home, All Listings, and Add New Listings links only if the user is authenticated -->
+      <div class="navbar-nav">
           <a class="nav-link " href="/">Home</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" href="/listings">All Listings</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" href="/listings/new">Add New Listings</a>
-        </li>
-        
-      </ul>
-    </div>
+      </div>
+
+      <!--  Show the Sign Up, Login, and Logout links only if the user is not authenticated> -->
+     <div class="navbar-nav ms-auto">
+        <!-- If the user is not authenticated, show the Sign Up and Login links -->
+        <% if(!currentUser) {  %>
+          <a class="nav-link " href="/signup">Sign Up</a>
+          <a class="nav-link" href="/login">Login</a>
+        <% } %>
+
+        <!--If the user is authenticated, show the Logout link  -->
+        <% if(currentUser) {  %>
+          <a class="nav-link" href="/logout">Logout</a>
+        <% } %>
+
+      </div>
   </div>
+
 </nav>

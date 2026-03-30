@@ -59,8 +59,9 @@ passport.deserializeUser(User.deserializeUser()); // serializeUser and deseriali
 
 // Flash Middleware
 app.use((req, res, next) => {
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success"); // Make flash messages available in all templates
+    res.locals.error = req.flash("error"); // Make flash messages available in all templates
+    res.locals.currentUser = req.user; // Make the current user available in all templates
     next();
 });
 

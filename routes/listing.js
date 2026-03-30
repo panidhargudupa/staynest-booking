@@ -3,7 +3,8 @@ const router = express.Router();
 
 const Listing = require("../models/listing");
 const wrapAsync = require("../utils/WrapAsync");
-const { validateListing } = require("../middleware");
+const { validateListing, isAuthor } = require("../middleware");
+const { isLoggedIn } = require("../middleware"); // Importing the isLoggedIn middleware to protect certain routes
 
 // INDEX
 router.get("/", wrapAsync(async (req,res)=>{
@@ -12,30 +13,34 @@ router.get("/", wrapAsync(async (req,res)=>{
 }));
 
 // NEW
-router.get("/new",(req,res)=>{
+router.get("/new",isLoggedIn, (req,res)=>{ // Only logged in users can access the form to create a new listing
     res.render("listings/new");
 });
 
 // SHOW
 router.get("/:id", wrapAsync(async(req,res)=>{
-    const listing = await Listing.findById(req.params.id).populate("reviews");
+    const listing = await Listing.findById(req.params.id)
+    // Populate the reviews and owner fields to display the associated data in the listing details page
+        .populate({path: "reviews",populate: { path: "author" } }) // Populate the reviews and their authors(nested population )
+        .populate("owner"); 
     if(!listing) {
           req.flash("error", "Listing not found!");
-          res.redirect("/listings");
+          return res.redirect("/listings");
           
     }
     res.render("listings/show",{ listing });
 }));
 
 // EDIT
-router.get("/:id/edit", wrapAsync(async(req,res)=>{
+router.get("/:id/edit",isLoggedIn,isAuthor, wrapAsync(async(req,res)=>{
     const listing = await Listing.findById(req.params.id);
     res.render("listings/edit",{ listing });
 }));
 
 // CREATE
-router.post("/", validateListing ,wrapAsync(async(req,res)=>{
+router.post("/", isLoggedIn,isAuthor, validateListing ,wrapAsync(async(req,res)=>{ // Only logged in users can create a new listing, and the listing data is validated using the validateListing middleware
     const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id; // Set the owner of the listing to the currently logged in user
     await newListing.save();
     if(!newListing) {
           req.flash("error", "Failed to create listing!");  
@@ -46,15 +51,14 @@ router.post("/", validateListing ,wrapAsync(async(req,res)=>{
 }));
 
 // UPDATE
-router.put("/:id", validateListing ,wrapAsync(async(req,res)=>{
+router.put("/:id", isLoggedIn,isAuthor,validateListing ,wrapAsync(async(req,res)=>{
     await Listing.findByIdAndUpdate(req.params.id,{...req.body.listing});
      req.flash("success", "Updated successfully!");
-     
     res.redirect(`/listings/${req.params.id}`);
 }));
 
 // DELETE
-router.delete("/:id", wrapAsync(async(req,res)=>{
+router.delete("/:id",isLoggedIn,isAuthor, wrapAsync(async(req,res)=>{
     await Listing.findByIdAndDelete(req.params.id);
     req.flash("success", "Listing deleted successfully!");
     res.redirect("/listings");

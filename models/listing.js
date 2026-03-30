@@ -26,10 +26,16 @@ const listingSchema = new Schema({
     country: {
         type: String
     },
+    // Array of references to the Review model to establish a relationship between listings and their reviews
     reviews: [{
         type: Schema.Types.ObjectId,
         ref: "Review"
-    }]
+    }],
+    // Reference to the User model to establish a relationship between listings and their owners
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    }
 });
 
 //post middleware to delete all reviews associated with a listing when the listing is deleted
