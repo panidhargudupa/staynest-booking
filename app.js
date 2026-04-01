@@ -19,6 +19,11 @@ const User = require("./models/user.js");
 const passportLocalMongoose = require("passport-local-mongoose");
 
 
+// HOME REDIRECT
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
+
 // ROUTES
 const listingRoutes = require("./routes/listing");
 const reviewRoutes = require("./routes/review");
