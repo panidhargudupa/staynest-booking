@@ -12,7 +12,7 @@ The project is built using **Node.js, Express.js, MongoDB, EJS, Bootstrap, Cloud
 ---
 
 ## 📂 GitHub Repository
-🔗 https://github.com/panidhargudupa/staynest-vacation-rental-booking-platform
+🔗 https://github.com/panidhargudupa/staynest-booking
 
 ---
 
@@ -262,24 +262,11 @@ StayNest uses **Passport.js** for secure user authentication.
 
 ---
 
-## 🖼️ Screenshots
-
-_Add screenshots here_
-
-Example:
-
-```md
-![Home Page](./screenshots/homepage.png)
-![Listing Details](./screenshots/listing.png)
-```
-
----
-
 ## 👨‍💻 Author
 
-**Pani Dhar Gudupa**
+**Panidhar G Udupa**
 
-📌 MCA Final Year | Full Stack Developer  
+📌 Full Stack Developer  
 🔗 GitHub: https://github.com/panidhargudupa
 
 ---
